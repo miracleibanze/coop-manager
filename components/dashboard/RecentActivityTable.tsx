@@ -1,0 +1,118 @@
+// components/dashboard/RecentActivityTable.tsx
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/UI/Table";
+import { Badge } from "@/components/UI/Badge";
+import { Card, CardContent, CardHeader, CardTitle } from "../UI/card";
+import { Button } from "../UI/Button";
+
+interface Activity {
+  _id: string;
+  type: string;
+  member: { name: string; email: string };
+  amount?: number;
+  description: string;
+  date: string;
+  status?: string;
+}
+
+async function fetchRecentActivity(): Promise<Activity[]> {
+  const response = await fetch("/api/activity/recent");
+  if (!response.ok) throw new Error("Failed to fetch activity");
+  return response.json();
+}
+
+export function RecentActivityTable() {
+  const { data: activities, isLoading } = useQuery({
+    queryKey: ["recent-activity"],
+    queryFn: fetchRecentActivity,
+  });
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "approved":
+        return "success";
+      case "pending":
+        return "warning";
+      case "rejected":
+        return "destructive";
+      default:
+        return "secondary";
+    }
+  };
+
+  return (
+    <div className="max_w_custom">
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Activity</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Type</TableHead>
+                <TableHead>Member</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-4">
+                    Loading activities...
+                  </TableCell>
+                </TableRow>
+              ) : (
+                activities?.map((activity) => (
+                  <TableRow key={activity._id}>
+                    <TableCell className="capitalize">
+                      {activity.type.replace("_", " ")}
+                    </TableCell>
+                    <TableCell>
+                      <div className="font-medium">{activity.member.name}</div>
+                      <div className="text-sm text-gray-500">
+                        {activity.member.email}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {activity.amount
+                        ? `$${activity.amount.toLocaleString()}`
+                        : "-"}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(activity.date).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      {activity.status && (
+                        <Badge variant={getStatusColor(activity.status)}>
+                          {activity.status}
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Button variant="outline" size="sm">
+                        View Details
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+*:not(.dark):root {
+  --background: theme("colors.zinc.100");
+  --foreground: theme("colors.gray.950");
+  --primary: theme("colors.gray.900");
+  --inverse: theme("colors.zinc.100");
+  --secondary: theme("colors.rose.500");
+  --third: theme("colors.green.600");
+  --lightPrimary: theme("colors.blue.700");
+  --lightBorder: theme("colors.zinc.400");
+  --lightBackground: theme("colors.blue.50");
+  --colorBorder: theme("colors.blue.300");
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: theme("colors.gray.950");
+    --foreground: theme("colors.zinc.100");
+    --primary: theme("colors.zinc.100");
+    --inverse: theme("colors.gray.900");
+    --secondary: theme("colors.rose.500");
+    --third: theme("colors.green.600");
+    --lightBorder: #ffffff80; /* or  theme("colors.white") + "/50"  */
+    --lightPrimary: theme("colors.blue.700");
+    --lightBackground: theme("colors.blue.50");
+    --colorBorder: theme("colors.blue.300");
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-inverse: var(--inverse);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-third: var(--third);
+  --color-lightBorder: var(--lightBorder);
+  --color-lightBackground: var(--lightBackground);
+  --color-lightPrimary: var(--lightPrimary);
+  --color-colorBorder: var(--colorBorder);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html,
+body {
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.section {
+  @apply py-6 px-3 sm:px-6 lg:px-8;
+}
+
+.container {
+  @apply 2xl:py-24 2xl:pt-0 pb-16 max-2xl:min-h-[70vh] w-full max-w-7xl mx-auto;
+}
+
+.shadow_left {
+  box-shadow: -8px -2px 20px -12px;
+}
+
+.max_w_custom {
+  @apply w-full max-w-screen-2xl xl:mx-auto md:px-6 px-3;
+}
