@@ -4,13 +4,10 @@ import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import InventoryItem from "@/models/InventoryItem";
 
-interface RouteParams {
-  params: {
-    id: string;
-  };
-}
-
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -19,10 +16,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     const body = await request.json();
+    const { id } = await params;
     await connectDB();
 
     const { qty, reason, ...data } = body;
-    const item = await InventoryItem.findById(params.id);
+
+    const item = await InventoryItem.findById(id);
 
     if (!item) {
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
@@ -51,9 +50,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const session = await getServerSession(authOptions);
+    const { id } = await params;
 
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -61,7 +64,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     await connectDB();
 
-    const item = await InventoryItem.findByIdAndDelete(params.id);
+    const item = await InventoryItem.findByIdAndDelete(id);
 
     if (!item) {
       return NextResponse.json({ error: "Item not found" }, { status: 404 });

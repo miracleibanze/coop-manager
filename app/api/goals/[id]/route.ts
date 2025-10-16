@@ -4,13 +4,10 @@ import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import Goal from "@/models/Goal";
 
-interface RouteParams {
-  params: {
-    id: string;
-  };
-}
-
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -19,10 +16,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     const body = await request.json();
+    const { id } = await params;
     await connectDB();
 
     const { inc, ...data } = body;
-    const goal = await Goal.findById(params.id);
+    const goal = await Goal.findById(id);
 
     if (!goal) {
       return NextResponse.json({ error: "Goal not found" }, { status: 404 });
@@ -45,8 +43,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
 
     if (!session) {
@@ -55,7 +57,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     await connectDB();
 
-    const goal = await Goal.findByIdAndDelete(params.id);
+    const goal = await Goal.findByIdAndDelete(id);
 
     if (!goal) {
       return NextResponse.json({ error: "Goal not found" }, { status: 404 });

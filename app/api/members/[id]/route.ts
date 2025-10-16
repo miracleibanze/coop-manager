@@ -4,15 +4,13 @@ import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import Member from "@/models/Member";
 
-interface RouteParams {
-  params: {
-    id: string;
-  };
-}
-
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const session = await getServerSession(authOptions);
+    const { id } = await params;
 
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -21,7 +19,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const body = await request.json();
     await connectDB();
 
-    const member = await Member.findByIdAndUpdate(params.id, body, {
+    const member = await Member.findByIdAndUpdate(id, body, {
       new: true,
     });
 
@@ -39,9 +37,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const session = await getServerSession(authOptions);
+    const { id } = await params;
 
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -49,7 +51,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     await connectDB();
 
-    const member = await Member.findByIdAndDelete(params.id);
+    const member = await Member.findByIdAndDelete(id);
 
     if (!member) {
       return NextResponse.json({ error: "Member not found" }, { status: 404 });

@@ -30,8 +30,8 @@ export async function buildExcelReport({
       m.name,
       m.email,
       m.phone,
-      m.joinedAt?.toISOString(),
-      m.sharePercent,
+      m.joinDate?.toISOString(),
+      m.totalContributions,
     ])
   );
 
@@ -91,7 +91,7 @@ export function buildPdfReportStream({
           doc.text(
             `${m.name} — ${m.email || "No email"} — Phone: ${
               m.phone || "N/A"
-            } — Share: ${m.sharePercent}%`
+            } — Share: ${m.totalContributions}`
           );
           doc.moveDown(0.5);
         });
