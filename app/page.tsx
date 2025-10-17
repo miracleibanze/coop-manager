@@ -45,15 +45,15 @@ const features: Feature[] = [
 
 const LandingPage: React.FC = () => {
   return (
-    <main className="space-y-32">
+    <main className="space-y-32 w-full">
       {/* Hero Section */}
-      <section className="section bg-zinc-100 dark:bg-[#010326]">
-        <div className="grid md:grid-cols-2 grid-cols-1 container gap-4">
+      <section className="section flex-1 w-full mx-auto bg-zinc-100 dark:bg-[#010326]">
+        <div className="grid md:grid-cols-2 grid-cols-1 container gap-4 pt-12">
           <div className="col-span-1 flex flex-col justify-center">
             <h1 className="text-5xl md:text-6xl font-bold mb-6 text-primary">
               Manage Your Cooperative wisely
             </h1>
-            <p className="text-lg md:text-xl mb-8 text-gray-700 dark:text-zinc-300 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl mb-8 text-primary/90 dark:text-zinc-300 max-w-2xl mx-auto">
               CoopManager helps your cooperative thrive by organizing members,
               tracking resources, managing finances, and streamlining
               communication — all in one intuitive platform. Make informed
@@ -87,26 +87,34 @@ const LandingPage: React.FC = () => {
 
       {/* Features Section */}
       <section id="features" className="max-w-7xl mx-auto px-6">
-        <h2 className="text-4xl font-bold text-center mb-12">
+        <h2 className="text-4xl font-bold text-center mb-12 backdrop-blur-lg py-3">
           Features That Make a Difference
         </h2>
         <div className="grid md:grid-cols-3 gap-8">
           {features.map((feature, idx) => (
             <div
               key={idx}
-              className="bg-white p-6 rounded-lg shadow hover:shadow-xl transition"
+              className="bg-background px-6 pb-12 pt-8 rounded-lg shadow hover:shadow-lg hover:-translate-0.5 transition shadow-colorPrimary"
             >
-              <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-              <p className="text-gray-600">{feature.description}</p>
+              <div className="w-6 h-6 border-2 border-colorPrimary relative rounded-full mb-4">
+                <div className="w-14 h-4 border border-colorPrimary rounded-full border-b-0 absolute top-1/2 left-1/4 origin-top-left -rotate-120" />
+              </div>
+              <h3 className="text-xl text-primary font-bold mb-2">
+                {feature.title}
+              </h3>
+              <p className="text-lightborder">{feature.description}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* About Section */}
-      <section id="about" className="bg-gray-50 py-32 px-6 text-center">
+      <section
+        id="about"
+        className="bg-lightBackground/90 text-inverse py-32 px-6 text-center"
+      >
         <h2 className="text-4xl font-bold mb-6">About CoopManager</h2>
-        <p className="max-w-3xl mx-auto text-gray-700 text-lg">
+        <p className="max-w-3xl mx-auto text-primary/90 text-lg">
           CoopManager is designed for modern cooperatives. Whether you’re
           managing members, resources, or finances, our platform simplifies
           everything. Save time, reduce errors, and focus on growing your
@@ -118,13 +126,13 @@ const LandingPage: React.FC = () => {
       <section id="pricing" className="max-w-7xl mx-auto px-6 text-center">
         <h2 className="text-4xl font-bold mb-12">Pricing Plans</h2>
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-white p-8 rounded-lg shadow hover:shadow-xl transition">
+          <div className="bg-background p-8 rounded-lg shadow shadow-lightBackground transition">
             <h3 className="text-2xl font-bold mb-4">Basic</h3>
-            <p className="text-gray-700 mb-6">
+            <p className="text-primary/90 mb-6">
               Free plan for small cooperatives
             </p>
             <p className="text-3xl font-bold mb-6">$0/month</p>
-            <ul className="mb-6 text-gray-600 space-y-2">
+            <ul className="mb-6 text-primary/80 space-y-2">
               <li>Up to 50 members</li>
               <li>Basic tracking</li>
               <li>Email support</li>
@@ -137,11 +145,11 @@ const LandingPage: React.FC = () => {
             </a>
           </div>
 
-          <div className="bg-white p-8 rounded-lg shadow hover:shadow-xl transition border-2 border-green-600">
+          <div className="bg-background p-8 rounded-lg shadow hover:shadow-xl transition border-2 border-green-600 relative">
             <h3 className="text-2xl font-bold mb-4">Pro</h3>
-            <p className="text-gray-700 mb-6">For growing cooperatives</p>
+            <p className="text-primary/90 mb-6">For growing cooperatives</p>
             <p className="text-3xl font-bold mb-6">$29/month</p>
-            <ul className="mb-6 text-gray-600 space-y-2">
+            <ul className="mb-6 text-primary/80 space-y-2">
               <li>Up to 500 members</li>
               <li>Full analytics</li>
               <li>Priority support</li>
@@ -154,11 +162,11 @@ const LandingPage: React.FC = () => {
             </a>
           </div>
 
-          <div className="bg-white p-8 rounded-lg shadow hover:shadow-xl transition">
+          <div className="bg-background shadow p-8 rounded-lg shadow hover:shadow-xl transition">
             <h3 className="text-2xl font-bold mb-4">Enterprise</h3>
-            <p className="text-gray-700 mb-6">For large-scale cooperatives</p>
+            <p className="text-primary/90 mb-6">For large-scale cooperatives</p>
             <p className="text-3xl font-bold mb-6">Contact us</p>
-            <ul className="mb-6 text-gray-600 space-y-2">
+            <ul className="mb-6 text-primary/80 space-y-2">
               <li>Unlimited members</li>
               <li>Custom workflows</li>
               <li>Dedicated support</li>
@@ -176,7 +184,7 @@ const LandingPage: React.FC = () => {
       {/* Contact / Signup Section */}
       <section id="signup" className="bg-green-50 py-32 px-6 text-center">
         <h2 className="text-4xl font-bold mb-6">Get Started Today</h2>
-        <p className="text-gray-700 mb-8 max-w-2xl mx-auto">
+        <p className="text-primary/90 mb-8 max-w-2xl mx-auto">
           Join CoopManager and take your cooperative management to the next
           level. Free trial available for all new users.
         </p>

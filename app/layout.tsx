@@ -72,11 +72,11 @@ const MainLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
       <main
         className={`${
           isStart
-            ? "pt-16"
+            ? "pt-16 w-full"
             : "fixed top-1 right-0 bottom-1 left-64 rounded-4xl border border-lightBorder overflow-hidden shadow_left shadow-lightBorder"
         }`}
       >
-        <div className="absolute inset-0 -z-10">
+        <div className={`${isStart ? "fixed" : "absolute"} inset-0 -z-10`}>
           <Image
             src={backgroundImage}
             alt="background"

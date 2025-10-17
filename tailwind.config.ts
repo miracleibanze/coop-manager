@@ -16,7 +16,7 @@ const config: Config = {
         foreground: "var(--color-foreground)",
         third: "var(--color-third)",
         lightBorder: "var(--color-lightBorder)",
-        lightPrimary: "var(--color-lightPrimary)",
+        colorPrimary: "var(--color-colorPrimary)",
         lightBackground: "var(--color-lightBackground)",
         colorBorder: "var(--color-colorBorder)",
       },
