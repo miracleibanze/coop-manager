@@ -16,6 +16,8 @@ import {
 import Image from "next/image";
 import logo from "@/public/logo.png";
 import darkLogo from "@/public/darkLogo.png";
+import { useSession } from "next-auth/react";
+import { authOptions } from "@/lib/auth";
 
 const navigation = [
   {
@@ -80,6 +82,7 @@ const navigation = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   return (
     <aside className="w-64 bg-background shadow-lg h-full flex flex-col fixed top-0 bottom-0 left-0">
@@ -146,6 +149,7 @@ export function Sidebar() {
           );
         })}
       </nav>
+      <div className="w-full">{session?.user.name ?? "no user"}</div>
     </aside>
   );
 }

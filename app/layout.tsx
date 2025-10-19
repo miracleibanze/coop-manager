@@ -11,7 +11,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Sidebar } from "@/components/Sidebar";
-import Loader from "./loading";
+import Loading from "./loading";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -53,14 +53,14 @@ const MainLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
 
   // Show loader while checking session for protected pages
   if (!isStart && status === "loading") {
-    return <Loader />;
+    return <Loading />;
   }
 
   // Show loader if not authenticated and not on start/auth routes
   if (!isStart && !session) {
     return (
       <main className="fixed top-1 right-0 bottom-1 left-64 flex items-center justify-center rounded-4xl border border-lightBorder shadow_left shadow-lightBorder">
-        <Loader />
+        <Loading />
       </main>
     );
   }

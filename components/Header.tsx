@@ -13,6 +13,27 @@ export function Header() {
 
   const isPublicPath = pathname.startsWith("/auth/") || pathname === "/";
 
+  const scrollToSection = (sectionId: string) => {
+    if (pathname !== "/") {
+      // If not on landing page, navigate to landing page first
+      window.location.href = `/#${sectionId}`;
+      return;
+    }
+
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const headerHeight = 68;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition =
+        elementPosition + window.pageYOffset - headerHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <header className="fixed top-0 right-0 left-0 bg-zinc-100 shadow-sm border-b z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -32,42 +53,30 @@ export function Header() {
             </a>
             <nav className="md:block hidden justify-center flex-1 w-full">
               <div className="flex justify-center mx-auto">
-                <a
-                  href="/dashboard"
-                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md"
+                <button
+                  onClick={() => scrollToSection("features")}
+                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md transition-colors"
                 >
-                  Dashboard
-                </a>
-                <a
-                  href="/members"
-                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md"
+                  Features
+                </button>
+                <button
+                  onClick={() => scrollToSection("about")}
+                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md transition-colors"
                 >
-                  Members
-                </a>
-                <a
-                  href="/inventory"
-                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md"
+                  About
+                </button>
+                <button
+                  onClick={() => scrollToSection("pricing")}
+                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md transition-colors"
                 >
-                  Inventory
-                </a>
-                <a
-                  href="/goals"
-                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md"
+                  Pricing
+                </button>
+                <button
+                  onClick={() => scrollToSection("signup")}
+                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md transition-colors"
                 >
-                  Goals
-                </a>
-                <a
-                  href="/transfers"
-                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md"
-                >
-                  Transfers
-                </a>
-                <a
-                  href="/reports"
-                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md"
-                >
-                  Reports
-                </a>
+                  Get Started
+                </button>
               </div>
             </nav>
           </div>
@@ -75,13 +84,13 @@ export function Header() {
             <div className="flex items-center space-x-4">
               <a
                 href="/auth/signin"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md"
+                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md transition-colors hover:bg-lightBackground hover:border border-colorBorder"
               >
                 Sign In
               </a>
               <a
                 href="/auth/register"
-                className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md"
+                className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md transition-colors"
               >
                 Register
               </a>

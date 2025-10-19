@@ -49,8 +49,8 @@ const LandingPage: React.FC = () => {
     <main className="space-y-32 w-full">
       {/* Hero Section */}
       <section className="section flex-1 w-full mx-auto bg-background">
-        <div className="grid md:grid-cols-2 grid-cols-1 container gap-4 pt-12">
-          <div className="col-span-1 flex flex-col justify-center">
+        <div className="grid md:grid-cols-2 grid-cols-1 container gap-4 !pt-20">
+          <div className="col-span-1 flex flex-col justify-center gap-4">
             <h1 className="text-5xl md:text-6xl font-bold mb-6 text-primary">
               Manage Your Cooperative Wisely
             </h1>
@@ -72,19 +72,19 @@ const LandingPage: React.FC = () => {
             <Image
               src={LandingIllustration}
               alt="Cooperative management illustration"
-              className="object-cover w-full dark:hidden"
+              className="object-cover w-full dark:hidden rounded-2xl dark:border border-lightBorder"
             />
             <Image
               src={darkLandingIllustration}
               alt="Cooperative management illustration"
-              className="object-cover w-full hidden dark:block"
+              className="object-cover w-full hidden dark:block rounded-2xl dark:border border-lightBorder"
             />
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="section">
+      <section id="features" className="section !py-16">
         <h2 className="text-4xl font-bold text-center mb-12 backdrop-blur-lg py-3 w-full max-w-7xl mx-auto border border-secondary rounded-lg bg-background/50">
           Features That Make a Difference
         </h2>
@@ -109,7 +109,7 @@ const LandingPage: React.FC = () => {
       {/* About Section */}
       <section
         id="about"
-        className="bg-primary/5 backdrop-blur-lg border-y border-lightBorder py-32 px-6 text-center text-primary section"
+        className="bg-primary/5 backdrop-blur-lg border-y border-lightBorder !py-32 px-6 text-center text-primary section"
       >
         <div className="py-20">
           <h2 className="text-4xl font-bold mb-6">About CoopManager</h2>
@@ -160,13 +160,13 @@ const LandingPage: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div className="p-6">
             <div className="text-3xl md:text-4xl font-bold text-third mb-2">
-              500+
+              50+
             </div>
             <div className="text-primary/80">Cooperatives</div>
           </div>
           <div className="p-6">
             <div className="text-3xl md:text-4xl font-bold text-third mb-2">
-              50K+
+              230+
             </div>
             <div className="text-primary/80">Members</div>
           </div>
@@ -188,7 +188,7 @@ const LandingPage: React.FC = () => {
       {/* Pricing Section */}
       <section
         id="pricing"
-        className="max-w-7xl mx-auto px-6 text-center section"
+        className="max-w-7xl mx-auto px-6 !py-16 text-center section"
       >
         <h2 className="text-4xl font-bold mb-12 text-primary">Pricing Plans</h2>
         <div className="grid md:grid-cols-3 gap-8">
@@ -258,7 +258,7 @@ const LandingPage: React.FC = () => {
       {/* Contact / Signup Section */}
       <section
         id="signup"
-        className="bg-gradient-to-br from-cta/10 to-third/10 backdrop-blur-lg border border-cta/30 text-primary py-32 px-6 text-center max-w-4xl w-full rounded-3xl mx-auto section"
+        className="bg-gradient-to-br from-cta/10 to-third/10 backdrop-blur-lg border border-cta/30 text-primary py-32 px-6 text-center max-w-4xl w-full my-16 rounded-3xl mx-auto section"
       >
         <h2 className="text-4xl font-bold mb-6">Get Started Today</h2>
         <p className="text-primary/90 mb-8 max-w-2xl mx-auto text-lg">
@@ -282,7 +282,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-primary/5 border-t border-lightBorder text-primary py-16 px-6 section">
+      <footer className="bg-primary/5 border-t border-lightBorder text-primary py-16 px-6 section backdrop-blur-lg">
         <div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Company Info */}
@@ -356,15 +356,15 @@ const LandingPage: React.FC = () => {
               <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
               <ul className="space-y-2 text-primary/80">
                 <li className="hover:text-secondary transition">
-                  hello@coopmanager.com
+                  miraclecode11@gmail.com
                 </li>
                 <li className="hover:text-secondary transition">
-                  +1 (555) 123-4567
+                  (+250) 794 881 466
                 </li>
                 <li className="hover:text-secondary transition">
-                  123 Cooperative Street
+                  Rwanda
                   <br />
-                  Business City, BC 12345
+                  Kigali City, Remote
                 </li>
               </ul>
             </div>

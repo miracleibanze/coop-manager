@@ -1,50 +1,45 @@
-// models/User.ts (important update)
-import mongoose from "mongoose";
+// models/User.ts
+import mongoose, { Document, Model } from "mongoose";
 
-const UserSchema = new mongoose.Schema(
+export interface IUser extends Document {
+  _id: string;
+  name: string;
+  email: string;
+  about: string;
+  role: "admin" | "manager";
+  passwordHash?: string; // Make optional for OAuth users
+  emailVerified?: Date;
+  image?: string;
+  provider: "credentials" | "google"; // Add provider field
+  createdAt: Date;
+  updatedAt: Date;
+  lastLoginAt: Date;
+}
+
+const UserSchema = new mongoose.Schema<IUser>(
   {
-    name: {
-      type: String,
-      required: false,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
-    passwordHash: {
-      type: String,
-      required: false, // Not required for Google users
-    },
-    image: {
-      type: String,
-      required: false,
-    },
-    role: {
-      type: String,
-      default: "manager",
-      enum: ["manager", "admin"],
-    },
+    email: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
+    about: { type: String },
+    passwordHash: { type: String }, // Make optional
+    role: { type: String, enum: ["admin", "manager"], default: "manager" },
+    emailVerified: { type: Date },
+    image: { type: String },
     provider: {
       type: String,
-      required: true,
+      enum: ["credentials", "google"],
       default: "credentials",
-      enum: ["credentials", "google", "both"],
     },
-    emailVerified: {
-      type: Date,
-      required: false,
-    },
+
     lastLoginAt: {
       type: Date,
       default: Date.now,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-export default mongoose.models.User || mongoose.model("User", UserSchema);
+const User: Model<IUser> =
+  mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
+
+export default User;
