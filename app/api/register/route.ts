@@ -1,3 +1,4 @@
+// app/api/register/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
@@ -77,6 +78,7 @@ export async function POST(request: NextRequest) {
       passwordHash: hash,
       name: name?.trim() || "",
       role: "admin",
+      provider: "credentials", // Explicitly set provider
     });
 
     console.log("User created successfully:", user.email);

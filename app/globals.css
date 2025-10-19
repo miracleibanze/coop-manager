@@ -11,6 +11,8 @@
   --lightBorder: theme("colors.zinc.400");
   --lightBackground: theme("colors.blue.50");
   --colorBorder: theme("colors.blue.300");
+  --cta: theme("colors.blue.600"); /* Added CTA color */
+  --ctaHover: theme("colors.blue.700"); /* Added CTA hover */
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -23,10 +25,12 @@
     --inverse: theme("colors.gray.900");
     --secondary: theme("colors.rose.500");
     --third: theme("colors.green.600");
-    --lightBorder: #ffffff80; /* or  theme("colors.white") + "/50"  */
+    --lightBorder: #ffffff80;
     --colorPrimary: theme("colors.blue.700");
     --lightBackground: theme("colors.blue.50");
     --colorBorder: theme("colors.blue.300");
+    --cta: theme("colors.blue.600"); /* Added CTA color */
+    --ctaHover: theme("colors.blue.700"); /* Added CTA hover */
   }
 }
 
@@ -41,6 +45,8 @@
   --color-lightBackground: var(--lightBackground);
   --color-colorPrimary: var(--colorPrimary);
   --color-colorBorder: var(--colorBorder);
+  --color-cta: var(--cta); /* Added CTA */
+  --color-ctaHover: var(--ctaHover); /* Added CTA hover */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -52,8 +58,7 @@ body {
 }
 
 .section {
-  @apply py-6 
-  px-6 lg:px-8;
+  @apply px-6 lg:px-8 [&>div]:max-w-7xl [&>div]:mx-auto;
 }
 
 .container {

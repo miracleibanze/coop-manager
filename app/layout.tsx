@@ -81,7 +81,7 @@ const MainLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
             src={backgroundImage}
             alt="background"
             fill
-            className="object-cover dark:hidden"
+            className="object-cover dark:hidden opacity-50"
           />
           <Image
             src={darkBackgroundImage}

@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default function Loader() {
   return (
-    <div className="absolute inset-0 z-[9999] bg-zinc-100 grid place-content-center">
+    <div className="absolute inset-0 z-[999999] bg-zinc-100 grid place-content-center">
       <Image
         src="/logo.gif"
         alt="logo"
