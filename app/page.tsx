@@ -72,12 +72,12 @@ const LandingPage: React.FC = () => {
             <Image
               src={LandingIllustration}
               alt="Cooperative management illustration"
-              className="object-cover w-full dark:hidden rounded-2xl border border-lightBorder"
+              className="object-cover w-full dark:hidden"
             />
             <Image
               src={darkLandingIllustration}
               alt="Cooperative management illustration"
-              className="object-cover w-full hidden dark:block rounded-2xl border border-lightBorder"
+              className="object-cover w-full hidden dark:block"
             />
           </div>
         </div>
