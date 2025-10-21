@@ -1,8 +1,7 @@
-// app/auth/register/page.tsx
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Google, Loader } from "@/components/UI/Icons";
 
@@ -41,14 +40,14 @@ export default function Register() {
     return "weak";
   };
 
-  const handlePasswordBlur = () => {
-    const strength = getPasswordStrength(formData.password);
+  const handlePasswordChange = (password: string) => {
+    const strength = getPasswordStrength(password);
     setPasswordStrength(strength);
     setPasswordAccepted(strength === "medium" || strength === "strong");
   };
 
-  const handleConfirmBlur = () => {
-    setPasswordMatch(formData.confirmPassword === formData.password);
+  const handleConfirmChange = (confirmPassword: string) => {
+    setPasswordMatch(confirmPassword === formData.password);
   };
 
   const handleGoogleSignUp = async () => {
@@ -72,8 +71,23 @@ export default function Register() {
     setLoading(true);
     setError("");
 
+    // Enhanced validation
+    if (!formData.email.trim()) {
+      setError("Email is required.");
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.password.trim()) {
+      setError("Password is required.");
+      setLoading(false);
+      return;
+    }
+
     if (!passwordAccepted) {
-      setError("Password is too weak.");
+      setError(
+        "Please use a stronger password (at least 6 characters with letters and numbers)."
+      );
       setLoading(false);
       return;
     }
@@ -89,8 +103,8 @@ export default function Register() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
+          name: formData.name.trim(),
+          email: formData.email.trim(),
           password: formData.password,
         }),
       });
@@ -98,14 +112,16 @@ export default function Register() {
       const data = await response.json();
 
       if (response.ok) {
+        // Redirect to signin with success message
         router.push(
-          "/auth/signin?message=Registration successful! Please sign in."
+          "/auth/signin?message=Registration successful! Please sign in to continue."
         );
       } else {
-        setError(data.error || "Registration failed.");
+        setError(data.error || "Registration failed. Please try again.");
       }
-    } catch {
-      setError("Network error. Please check your connection.");
+    } catch (error) {
+      console.error("Registration error:", error);
+      setError("Network error. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -118,6 +134,17 @@ export default function Register() {
       [name]: value,
     }));
 
+    // Update password strength and match in real-time
+    if (name === "password") {
+      handlePasswordChange(value);
+      // Also update password match when password changes
+      if (formData.confirmPassword) {
+        setPasswordMatch(value === formData.confirmPassword);
+      }
+    } else if (name === "confirmPassword") {
+      handleConfirmChange(value);
+    }
+
     if (error) setError("");
   };
 
@@ -126,7 +153,7 @@ export default function Register() {
       case "weak":
         return "text-red-600";
       case "medium":
-        return "text-yellow-500";
+        return "text-yellow-600";
       case "strong":
         return "text-green-600";
       default:
@@ -134,18 +161,31 @@ export default function Register() {
     }
   };
 
+  const getStrengthMessage = () => {
+    switch (passwordStrength) {
+      case "weak":
+        return "Weak password - use at least 6 characters with letters and numbers";
+      case "medium":
+        return "Medium strength - good but could be stronger";
+      case "strong":
+        return "Strong password - excellent!";
+      default:
+        return "Enter a password (min. 6 characters)";
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 border border-lightBorder sm:px-8 px-4 py-12 backdrop-brightness-110 backdrop-blur-md rounded-2xl">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-lg shadow-md">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-primary">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Create your account
           </h2>
-          <p className="mt-2 text-center text-sm text-primary/70">
+          <p className="mt-2 text-center text-sm text-gray-600">
             Or{" "}
             <a
               href="/auth/signin"
-              className="font-medium text-blue-600 hover:text-blue-500"
+              className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
             >
               sign in to your existing account
             </a>
@@ -178,7 +218,7 @@ export default function Register() {
             <div className="w-full border-t border-gray-300" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-6 bg-background text-lightBackground py-1 rounded-full border border-lightBorder">
+            <span className="px-4 bg-white text-gray-500">
               Or sign up with email
             </span>
           </div>
@@ -196,17 +236,17 @@ export default function Register() {
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-primary mb-1"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Full Name (Optional)
+                Full Name
               </label>
               <input
                 id="name"
                 name="name"
                 type="text"
                 autoComplete="name"
-                className="appearance-none rounded-md w-full px-3 py-2 border border-primary/50 text-primary focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="Full Name"
+                className="appearance-none rounded-md w-full px-3 py-2 border border-gray-300 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                placeholder="Your full name (optional)"
                 value={formData.name}
                 onChange={handleInputChange}
                 disabled={loading}
@@ -217,7 +257,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-primary mb-1"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Email Address *
               </label>
@@ -227,8 +267,8 @@ export default function Register() {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-md w-full px-3 py-2 border border-primary/50 text-primary focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="Email address"
+                className="appearance-none rounded-md w-full px-3 py-2 border border-gray-300 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                placeholder="Enter your email address"
                 value={formData.email}
                 onChange={handleInputChange}
                 disabled={loading}
@@ -239,7 +279,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-primary mb-1"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Password *
               </label>
@@ -249,24 +289,19 @@ export default function Register() {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="appearance-none rounded-md w-full px-3 py-2 border border-primary/50 text-primary focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="Password (min. 6 characters)"
+                className="appearance-none rounded-md w-full px-3 py-2 border border-gray-300 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                placeholder="Create a password (min. 6 characters)"
                 value={formData.password}
-                onChange={(e) => {
-                  handleInputChange(e);
-                  handlePasswordBlur();
-                }}
+                onChange={handleInputChange}
                 disabled={loading}
                 minLength={6}
               />
-              {passwordStrength && (
-                <p className={`mt-1 text-sm font-medium ${getStrengthColor()}`}>
-                  {passwordStrength === "weak" && "Weak password"}
-                  {passwordStrength === "medium" && "Medium strength"}
-                  {passwordStrength === "strong"
-                    ? "Strong password"
-                    : "Try mixing letters, symbols and numbers"}
-                </p>
+              {formData.password && (
+                <div className="mt-1">
+                  <p className={`text-sm font-medium ${getStrengthColor()}`}>
+                    {getStrengthMessage()}
+                  </p>
+                </div>
               )}
             </div>
 
@@ -274,7 +309,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="confirmPassword"
-                className="block text-sm font-medium text-primary mb-1"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Confirm Password *
               </label>
@@ -284,39 +319,38 @@ export default function Register() {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="appearance-none rounded-md w-full px-3 py-2 border border-primary/50 text-primary focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="Confirm Password"
+                className="appearance-none rounded-md w-full px-3 py-2 border border-gray-300 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                placeholder="Confirm your password"
                 value={formData.confirmPassword}
-                onChange={(e) => {
-                  handleInputChange(e);
-                  handleConfirmBlur();
-                }}
+                onChange={handleInputChange}
                 disabled={loading}
               />
-              {passwordMatch !== null && (
+              {formData.confirmPassword && passwordMatch !== null && (
                 <p
                   className={`mt-1 text-sm font-medium ${
                     passwordMatch ? "text-green-600" : "text-red-600"
                   }`}
                 >
-                  {passwordMatch ? "Passwords match" : "Passwords do not match"}
+                  {passwordMatch
+                    ? "✓ Passwords match"
+                    : "✗ Passwords do not match"}
                 </p>
               )}
             </div>
           </div>
 
-          {/* Submit */}
+          {/* Submit Button */}
           <div>
             <button
               type="submit"
               disabled={loading || !passwordAccepted || !passwordMatch}
-              className="group relative w-full flex justify-center py-2 px-4 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-colors"
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {loading ? (
-                <>
+                <span className="flex items-center">
                   <Loader />
                   Creating Account...
-                </>
+                </span>
               ) : (
                 "Create Account"
               )}

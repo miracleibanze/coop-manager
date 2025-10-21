@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import InventoryItem from "@/models/InventoryItem";
+import { Types } from "mongoose";
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,7 +14,11 @@ export async function GET(request: NextRequest) {
     }
 
     await connectDB();
-    const items = await InventoryItem.find().sort("-createdAt");
+    const items = await InventoryItem.find({
+      cooperativeId: new Types.ObjectId(session.user.cooperativeId),
+    })
+      .sort("-createdAt")
+      .exec();
 
     return NextResponse.json(items);
   } catch (error) {

@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/UI/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../UI/card";
 import { Button } from "../UI/Button";
+import { Skeleton } from "../UI/Skeleton";
 
 interface Activity {
   _id: string;
@@ -58,7 +59,7 @@ export function RecentActivityTable() {
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="text-lg">
                 <TableHead>Type</TableHead>
                 <TableHead>Member</TableHead>
                 <TableHead>Amount</TableHead>
@@ -68,47 +69,51 @@ export function RecentActivityTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-4">
-                    Loading activities...
-                  </TableCell>
-                </TableRow>
-              ) : (
-                activities?.map((activity) => (
-                  <TableRow key={activity._id}>
-                    <TableCell className="capitalize">
-                      {activity.type.replace("_", " ")}
-                    </TableCell>
-                    <TableCell>
-                      <div className="font-medium">{activity.member.name}</div>
-                      <div className="text-sm text-gray-500">
-                        {activity.member.email}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {activity.amount
-                        ? `$${activity.amount.toLocaleString()}`
-                        : "-"}
-                    </TableCell>
-                    <TableCell>
-                      {new Date(activity.date).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      {activity.status && (
-                        <Badge variant={getStatusColor(activity.status)}>
-                          {activity.status}
-                        </Badge>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Button variant="outline" size="sm">
-                        View Details
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
+              {isLoading
+                ? Array.from({ length: 4 }).map((_, idx) => (
+                    <TableRow key={idx}>
+                      {Array.from({ length: 6 }).map((_, subIdx) => (
+                        <TableCell className="text-center py-4" key={subIdx}>
+                          <Skeleton className="w-full rounded-2xl h-8" />
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                : activities?.map((activity) => (
+                    <TableRow key={activity._id}>
+                      <TableCell className="capitalize">
+                        {activity.type.replace("_", " ")}
+                      </TableCell>
+                      <TableCell>
+                        <div className="font-medium">
+                          {activity.member.name}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {activity.member.email}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {activity.amount
+                          ? `$${activity.amount.toLocaleString()}`
+                          : "-"}
+                      </TableCell>
+                      <TableCell>
+                        {new Date(activity.date).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        {activity.status && (
+                          <Badge variant={getStatusColor(activity.status)}>
+                            {activity.status}
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Button variant="outline" size="sm">
+                          View Details
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
             </TableBody>
           </Table>
         </CardContent>

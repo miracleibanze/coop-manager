@@ -12,6 +12,7 @@ export interface IInventoryItem extends Document {
   _id: string;
   name: string;
   sku?: string;
+  cooperativeId: mongoose.Types.ObjectId;
   quantity: number;
   unit?: string;
   cost?: number;
@@ -32,6 +33,11 @@ const InventoryItemSchema = new mongoose.Schema<IInventoryItem>(
   {
     name: { type: String, required: true },
     sku: String,
+    cooperativeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Cooperative",
+      required: true,
+    },
     quantity: { type: Number, default: 0 },
     unit: String,
     cost: Number,

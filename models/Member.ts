@@ -7,6 +7,7 @@ export interface IMember extends Document {
   email: string;
   phone: string;
   role: "member" | "admin";
+  cooperativeId: mongoose.Types.ObjectId;
   joinDate: Date;
   status: "active" | "inactive";
   contributionPlan: number;
@@ -21,6 +22,11 @@ const MemberSchema: Schema = new Schema(
     email: { type: String, required: true, unique: true },
     phone: { type: String, required: true },
     role: { type: String, enum: ["member", "admin"], default: "member" },
+    cooperativeId: {
+      type: Schema.Types.ObjectId,
+      ref: "Cooperative",
+      required: true,
+    },
     joinDate: { type: Date, default: Date.now },
     status: { type: String, enum: ["active", "inactive"], default: "active" },
     contributionPlan: { type: Number, required: true },

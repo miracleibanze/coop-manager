@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import Loan from "@/models/Loan";
 import Activity from "@/models/Activity";
 import { connectDB } from "@/lib/db";
+import { Types } from "mongoose";
 
 export async function GET(request: Request) {
   try {
@@ -18,15 +19,20 @@ export async function GET(request: Request) {
 
     await connectDB();
 
-    let query = {};
+    let query = {
+      cooperativeId: new Types.ObjectId(session.user.cooperativeId),
+      status: status ? status : false,
+    };
+
     if (status) {
-      query = { status };
+      query = { ...query, status };
     }
 
     const loans = await Loan.find(query)
       .populate("member", "name email")
       .populate("approvedBy", "name")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .exec();
 
     return NextResponse.json(loans);
   } catch (error) {

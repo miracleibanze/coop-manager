@@ -3,6 +3,7 @@ import mongoose, { Document, Schema } from "mongoose";
 
 export interface ILoan extends Document {
   member: mongoose.Types.ObjectId;
+  cooperativeId: mongoose.Types.ObjectId;
   requestedAmount: number;
   approvedAmount?: number;
   reason: string;
@@ -25,6 +26,11 @@ export interface ILoan extends Document {
 const LoanSchema: Schema = new Schema(
   {
     member: { type: Schema.Types.ObjectId, ref: "Member", required: true },
+    cooperativeId: {
+      type: Schema.Types.ObjectId,
+      ref: "Cooperative",
+      required: true,
+    },
     requestedAmount: { type: Number, required: true },
     approvedAmount: { type: Number },
     reason: { type: String, required: true },

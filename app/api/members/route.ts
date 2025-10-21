@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Member from "@/models/Member";
 import { connectDB } from "@/lib/db";
+import { Types } from "mongoose";
 
 export async function GET() {
   try {
@@ -13,9 +14,12 @@ export async function GET() {
     }
 
     await connectDB();
-    const members = await Member.find({})
+    const members = await Member.find({
+      cooperativeId: new Types.ObjectId(session.user.cooperativeId),
+    })
       .select("-password")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .exec();
 
     return NextResponse.json(members);
   } catch (error) {

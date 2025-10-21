@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import Expense from "@/models/Expense";
 import Activity from "@/models/Activity";
 import { connectDB } from "@/lib/db";
+import { Types } from "mongoose";
 
 export async function GET() {
   try {
@@ -14,9 +15,12 @@ export async function GET() {
     }
 
     await connectDB();
-    const expenses = await Expense.find({})
+    const expenses = await Expense.find({
+      cooperativeId: new Types.ObjectId(session.user.cooperativeId),
+    })
       .populate("createdBy", "name")
-      .sort({ date: -1 });
+      .sort({ date: -1 })
+      .exec();
 
     return NextResponse.json(expenses);
   } catch (error) {

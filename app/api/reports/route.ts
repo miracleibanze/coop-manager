@@ -9,6 +9,7 @@ import {
   buildExcelReport,
   buildPdfReportStream,
 } from "@/utils/reportGenerator";
+import { Types } from "mongoose";
 
 export async function GET(request: NextRequest) {
   try {
@@ -25,10 +26,15 @@ export async function GET(request: NextRequest) {
     await connectDB();
 
     const members = await Member.find();
-    const transactions = await Transaction.find().populate(
-      "fromMember toMember"
-    );
-    const inventory = await InventoryItem.find();
+    const transactions = await Transaction.find({
+      cooperativeId: new Types.ObjectId(session.user.cooperativeId),
+    })
+      .populate("fromMember toMember")
+      .exec();
+
+    const inventory = await InventoryItem.find({
+      cooperativeId: new Types.ObjectId(session.user.cooperativeId),
+    }).exec();
 
     if (type === "excel") {
       try {

@@ -16,12 +16,7 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6 pb-20">
-      <HeadingCard
-        title="Dashboard"
-        subTitle={`Welcome back, ${session.user?.name}!`}
-      />
-
+    <div className="space-y-6 pb-20 pt-10">
       <StatsCards />
 
       <QuickActions />

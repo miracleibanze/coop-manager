@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import Transaction from "@/models/Transaction";
+import { Types } from "mongoose";
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,9 +14,12 @@ export async function GET(request: NextRequest) {
     }
 
     await connectDB();
-    const transactions = await Transaction.find()
+    const transactions = await Transaction.find({
+      cooperativeId: new Types.ObjectId(session.user.cooperativeId),
+    })
       .populate("fromMember toMember")
-      .sort("-date");
+      .sort("-date")
+      .exec();
 
     return NextResponse.json(transactions);
   } catch (error) {

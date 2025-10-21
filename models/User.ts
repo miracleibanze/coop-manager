@@ -1,4 +1,3 @@
-// models/User.ts
 import mongoose, { Document, Model } from "mongoose";
 
 export interface IUser extends Document {
@@ -10,7 +9,8 @@ export interface IUser extends Document {
   passwordHash?: string; // Make optional for OAuth users
   emailVerified?: Date;
   image?: string;
-  provider: "credentials" | "google"; // Add provider field
+  provider: "credentials" | "google" | "both";
+  cooperativeId?: mongoose.Types.ObjectId; // Reference to the cooperative
   createdAt: Date;
   updatedAt: Date;
   lastLoginAt: Date;
@@ -27,10 +27,14 @@ const UserSchema = new mongoose.Schema<IUser>(
     image: { type: String },
     provider: {
       type: String,
-      enum: ["credentials", "google"],
+      enum: ["credentials", "google", "both"],
       default: "credentials",
     },
-
+    cooperativeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Cooperative",
+      default: null,
+    },
     lastLoginAt: {
       type: Date,
       default: Date.now,

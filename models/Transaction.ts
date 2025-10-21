@@ -3,6 +3,7 @@ import mongoose, { Document, Model, Types } from "mongoose";
 export interface ITransaction extends Document {
   _id: string;
   type: "contribution" | "transfer" | "expense" | "sale";
+  cooperativeId: mongoose.Types.ObjectId;
   amount: number;
   fromMember?: Types.ObjectId;
   toMember?: Types.ObjectId;
@@ -17,6 +18,11 @@ const TransactionSchema = new mongoose.Schema<ITransaction>(
     type: {
       type: String,
       enum: ["contribution", "transfer", "expense", "sale"],
+      required: true,
+    },
+    cooperativeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Cooperative",
       required: true,
     },
     amount: { type: Number, required: true },

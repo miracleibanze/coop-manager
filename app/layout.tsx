@@ -12,6 +12,8 @@ import { usePathname } from "next/navigation";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Sidebar } from "@/components/Sidebar";
 import Loading from "./loading";
+import Cooperative from "@/components/Cooperative";
+import HeadingCard from "@/components/UI/HeadingCard";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +33,7 @@ export default function RootLayout({
   const queryClient = new QueryClient();
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background transition-all duration-500 flex`}
       >
@@ -67,31 +69,55 @@ const MainLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <>
-      {isStart ? <Header /> : <Sidebar />}
-
-      <main
-        className={`${
-          isStart
-            ? "pt-16 w-full"
-            : "fixed top-1 right-0 bottom-1 left-64 rounded-4xl border border-lightBorder overflow-hidden shadow_left shadow-lightBorder"
-        }`}
-      >
-        <div className={`${isStart ? "fixed" : "absolute"} inset-0 -z-10`}>
-          <Image
-            src={backgroundImage}
-            alt="background"
-            fill
-            className="object-cover dark:hidden opacity-50"
-          />
-          <Image
-            src={darkBackgroundImage}
-            alt="darkBackground"
-            fill
-            className="object-cover hidden dark:block"
-          />
-        </div>
-        <div className="relative overflow-auto h-full w-full">{children}</div>
-      </main>
+      {!isStart &&
+      status === "authenticated" &&
+      !session?.user?.cooperativeId ? (
+        <Cooperative />
+      ) : (
+        <>
+          {isStart ? <Header /> : <Sidebar />}
+          <main
+            className={`${
+              isStart
+                ? "pt-16 w-full"
+                : "fixed top-1 right-0 bottom-1 left-64 rounded-4xl border border-lightBorder overflow-hidden shadow_left shadow-lightBorder"
+            }`}
+          >
+            {!isStart && (
+              <HeadingCard
+                title={
+                  (session?.user && session.user.cooperative?.name) ||
+                  "Dashboard"
+                }
+                subTitle={`Welcome back, ${
+                  session?.user?.name || "manage you cooperative"
+                }! ${
+                  session?.user.cooperative?.name
+                    ? "managing " + session.user.cooperative?.name
+                    : ""
+                }`}
+              />
+            )}
+            <div className={`${isStart ? "fixed" : "absolute"} inset-0 -z-10`}>
+              <Image
+                src={backgroundImage}
+                alt="background"
+                fill
+                className="object-cover dark:hidden opacity-50"
+              />
+              <Image
+                src={darkBackgroundImage}
+                alt="darkBackground"
+                fill
+                className="object-cover hidden dark:block"
+              />
+            </div>
+            <div className="relative overflow-auto h-full w-full">
+              {children}
+            </div>
+          </main>
+        </>
+      )}
     </>
   );
 };

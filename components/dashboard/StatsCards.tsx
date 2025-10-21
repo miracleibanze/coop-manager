@@ -33,47 +33,59 @@ export function StatsCards() {
       title: "Total Members",
       value: data?.totalMembers,
       icon: Users,
-      color: "blue",
+      color: "var(--colorPrimary)",
     },
     {
       title: "Active Loans",
       value: data?.activeLoans,
       icon: HandCoins,
-      color: "green",
+      color: "var(--third)",
     },
     {
       title: "Total Contributions",
       value: `$${data?.totalContributions?.toLocaleString()}`,
       icon: TrendingUp,
-      color: "purple",
+      color: "var(--secondary)",
     },
     {
       title: "Cooperative Balance",
       value: `$${data?.cooperativeBalance?.toLocaleString()}`,
       icon: Banknote,
-      color: "orange",
+      color: "var(--primary)",
+      red: data?.cooperativeBalance && data?.cooperativeBalance < 0,
     },
   ];
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 max_w_custom">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 max_w_custom [&>_]:transition-all duration-200">
         {stats.map((stat) => (
           <Card
             key={stat.title}
             className="border-0 shadow-lg bg-gradient-to-br from-white to-gray-50"
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-sm font-medium text-primary/80">
                 {stat.title}
               </CardTitle>
-              <stat.icon className="w-8 h-8 text-inverse" />
+              <div
+                className="w-14 h-14 text-inverse text-2xl rounded-full grid place-content-center"
+                style={{
+                  backgroundColor: stat.color,
+                }}
+              >
+                <stat.icon className="w-8 h-8" />
+              </div>
             </CardHeader>
             <CardContent>
               {isLoading ? (
                 <Skeleton className="h-8 w-24 bg-gray-200" />
               ) : (
-                <div className="text-2xl font-bold text-gray-900">
+                <div
+                  className={`text-2xl font-bold ${
+                    stat.red ? "text-red-600" : "text-gray-900"
+                  }`}
+                >
                   {stat.value}
                 </div>
               )}

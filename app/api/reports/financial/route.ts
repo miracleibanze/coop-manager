@@ -6,6 +6,7 @@ import Contribution from "@/models/Contribution";
 import Expense from "@/models/Expense";
 import Loan from "@/models/Loan";
 import { connectDB } from "@/lib/db";
+import { Types } from "mongoose";
 
 export async function GET(request: Request) {
   try {
@@ -35,6 +36,7 @@ export async function GET(request: Request) {
     const monthlyContributions = await Contribution.aggregate([
       {
         $match: {
+          cooperativeId: new Types.ObjectId(session.user.cooperativeId),
           status: "approved",
           date: {
             $gte: new Date(
@@ -59,6 +61,7 @@ export async function GET(request: Request) {
     const monthlyExpenses = await Expense.aggregate([
       {
         $match: {
+          cooperativeId: new Types.ObjectId(session.user.cooperativeId),
           date: {
             $gte: new Date(
               new Date().getFullYear(),
@@ -82,6 +85,7 @@ export async function GET(request: Request) {
     const monthlyLoans = await Loan.aggregate([
       {
         $match: {
+          cooperativeId: new Types.ObjectId(session.user.cooperativeId),
           status: "approved",
           createdAt: {
             $gte: new Date(

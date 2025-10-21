@@ -9,6 +9,7 @@ export interface IActivity extends Document {
     | "loan_repayment"
     | "expense";
   member: mongoose.Types.ObjectId;
+  cooperativeId: mongoose.Types.ObjectId;
   amount?: number;
   description: string;
   date: Date;
@@ -30,6 +31,11 @@ const ActivitySchema: Schema = new Schema(
       required: true,
     },
     member: { type: Schema.Types.ObjectId, ref: "Member", required: true },
+    cooperativeId: {
+      type: Schema.Types.ObjectId,
+      ref: "Cooperative",
+      required: true,
+    },
     amount: { type: Number },
     description: { type: String, required: true },
     date: { type: Date, required: true },

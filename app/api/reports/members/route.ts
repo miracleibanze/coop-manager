@@ -7,6 +7,7 @@ import Contribution from "@/models/Contribution";
 import Loan from "@/models/Loan";
 import Activity from "@/models/Activity";
 import { connectDB } from "@/lib/db";
+import { Types } from "mongoose";
 
 export async function GET() {
   try {
@@ -25,6 +26,11 @@ export async function GET() {
     // Get member loans data
     const memberLoans = await Loan.aggregate([
       {
+        $match: {
+          cooperativeId: new Types.ObjectId(session.user.cooperativeId),
+        },
+      },
+      {
         $group: {
           _id: "$member",
           activeLoans: {
@@ -40,6 +46,11 @@ export async function GET() {
 
     // Get last activity dates
     const lastActivities = await Activity.aggregate([
+      {
+        $match: {
+          cooperativeId: new Types.ObjectId(session.user.cooperativeId),
+        },
+      },
       {
         $group: {
           _id: "$member",

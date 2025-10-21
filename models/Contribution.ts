@@ -3,6 +3,7 @@ import mongoose, { Document, Schema } from "mongoose";
 
 export interface IContribution extends Document {
   member: mongoose.Types.ObjectId;
+  cooperativeId: mongoose.Types.ObjectId;
   amount: number;
   date: Date;
   paymentMethod: "cash" | "mobile_money" | "bank_transfer";
@@ -16,6 +17,11 @@ export interface IContribution extends Document {
 const ContributionSchema: Schema = new Schema(
   {
     member: { type: Schema.Types.ObjectId, ref: "Member", required: true },
+    cooperativeId: {
+      type: Schema.Types.ObjectId,
+      ref: "Cooperative",
+      required: true,
+    },
     amount: { type: Number, required: true },
     date: { type: Date, required: true },
     paymentMethod: {

@@ -39,7 +39,7 @@ export function QuickActions() {
             {actions.map((action) => (
               <Link key={action.label} href={action.href}>
                 <Button
-                  className="w-full h-20 flex flex-col gap-2"
+                  className="w-full h-20 flex flex-col gap-2 bg-lightBackground border border-colorBorder hover:border-secondary"
                   variant="outline"
                 >
                   <action.icon className="w-5 h-5 text-primary" />

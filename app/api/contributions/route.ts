@@ -6,6 +6,7 @@ import Contribution from "@/models/Contribution";
 import Member from "@/models/Member";
 import Activity from "@/models/Activity";
 import { connectDB } from "@/lib/db";
+import { Types } from "mongoose";
 
 export async function GET() {
   try {
@@ -15,10 +16,13 @@ export async function GET() {
     }
 
     await connectDB();
-    const contributions = await Contribution.find({})
+    const contributions = await Contribution.find({
+      cooperativeId: new Types.ObjectId(session.user.cooperativeId),
+    })
       .populate("member", "name email")
       .populate("approvedBy", "name")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .exec();
 
     return NextResponse.json(contributions);
   } catch (error) {

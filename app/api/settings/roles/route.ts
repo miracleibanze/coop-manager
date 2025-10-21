@@ -16,7 +16,7 @@ export async function GET() {
 
     await connectDB();
 
-    const roles = await Role.find({}).sort({ createdAt: -1 });
+    const roles = await Role.find().sort({ createdAt: -1 });
 
     // Get member count for each role
     const rolesWithMemberCount = await Promise.all(

@@ -5,15 +5,25 @@ import { authOptions } from "@/lib/auth";
 import Contribution from "@/models/Contribution";
 import Loan from "@/models/Loan";
 import { connectDB } from "@/lib/db";
+import { Types } from "mongoose";
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    if (!session) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (!session.user.cooperativeId) {
+      return NextResponse.json(
+        { error: "No cooperative assigned" },
+        { status: 400 }
+      );
+    }
+
     await connectDB();
+
+    const cooperativeId = new Types.ObjectId(session.user.cooperativeId);
 
     // Get last 6 months of data
     const months = [];
@@ -30,10 +40,11 @@ export async function GET() {
       });
     }
 
-    // Monthly contributions
+    // Monthly contributions - Filter by cooperativeId
     const monthlyContributions = await Contribution.aggregate([
       {
         $match: {
+          cooperativeId: cooperativeId,
           status: "approved",
           date: {
             $gte: new Date(
@@ -56,10 +67,11 @@ export async function GET() {
       { $sort: { "_id.year": 1, "_id.month": 1 } },
     ]);
 
-    // Monthly loans
+    // Monthly loans - Filter by cooperativeId
     const monthlyLoans = await Loan.aggregate([
       {
         $match: {
+          cooperativeId: cooperativeId,
           status: "approved",
           createdAt: {
             $gte: new Date(

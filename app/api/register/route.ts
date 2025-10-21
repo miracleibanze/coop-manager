@@ -6,10 +6,7 @@ import bcrypt from "bcryptjs";
 
 export async function POST(request: NextRequest) {
   try {
-    console.log("=== REGISTRATION ATTEMPT ===");
-
     const body = await request.json().catch(() => {
-      console.log("Invalid JSON in request body");
       return null;
     });
 
@@ -20,18 +17,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log("Request body received:", { ...body, password: "***" });
-
     const { email, password, name } = body;
 
-    // Basic validation
+    // Enhanced validation
     if (!email?.trim()) {
-      console.log("Email is required");
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
     if (!password?.trim()) {
-      console.log("Password is required");
       return NextResponse.json(
         { error: "Password is required" },
         { status: 400 }
@@ -39,7 +32,6 @@ export async function POST(request: NextRequest) {
     }
 
     if (password.length < 6) {
-      console.log("Password too short");
       return NextResponse.json(
         { error: "Password must be at least 6 characters" },
         { status: 400 }
@@ -49,55 +41,73 @@ export async function POST(request: NextRequest) {
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      console.log("Invalid email format");
       return NextResponse.json(
         { error: "Please enter a valid email address" },
         { status: 400 }
       );
     }
 
-    console.log("Connecting to database...");
-    await connectDB();
-    console.log("Database connected successfully");
-
-    // Check for existing user
-    console.log("Checking for existing user with email:", email);
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
-    if (existingUser) {
-      console.log("User already exists:", email);
+    // Name validation (optional but if provided, validate)
+    if (name && name.trim().length < 2) {
       return NextResponse.json(
-        { error: "User already exists with this email" },
+        { error: "Name must be at least 2 characters" },
         { status: 400 }
       );
     }
 
-    console.log("Creating new user...");
-    const hash = await bcrypt.hash(password, 10);
+    await connectDB();
+
+    // Check for existing user
+
+    const existingUser = await User.findOne({
+      email: email.toLowerCase().trim(),
+    });
+    if (existingUser) {
+      // Provide more specific error message based on provider
+      if (existingUser.provider === "google") {
+        return NextResponse.json(
+          {
+            error:
+              "This email is registered with Google. Please use Google Sign In.",
+          },
+          { status: 400 }
+        );
+      } else {
+        return NextResponse.json(
+          {
+            error:
+              "An account already exists with this email. Please sign in instead.",
+          },
+          { status: 400 }
+        );
+      }
+    }
+
+    const hash = await bcrypt.hash(password, 12); // Increased salt rounds for better security
+
     const user = await User.create({
       email: email.trim().toLowerCase(),
       passwordHash: hash,
       name: name?.trim() || "",
-      role: "admin",
-      provider: "credentials", // Explicitly set provider
+      role: "manager", // Changed from "admin" to "manager" as per your system
+      provider: "credentials",
+      // cooperativeId is not set here - user will create/join cooperative after registration
     });
-
-    console.log("User created successfully:", user.email);
 
     return NextResponse.json(
       {
         success: true,
-        message: "User registered successfully",
-        user: { id: user._id, email: user.email, name: user.name },
+        message: "Account created successfully! You can now sign in.",
+        user: {
+          id: user._id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+        },
       },
       { status: 201 }
     );
   } catch (error: any) {
-    console.error("=== REGISTRATION ERROR ===");
-    console.error("Error name:", error.name);
-    console.error("Error message:", error.message);
-    console.error("Error code:", error.code);
-    console.error("Full error:", error);
-
     if (error.code === 11000) {
       return NextResponse.json(
         { error: "Email already exists" },
@@ -105,8 +115,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // More specific error messages for common issues
+    if (error.name === "ValidationError") {
+      return NextResponse.json(
+        { error: "Invalid user data provided" },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
-      { error: "Internal server error: " + error.message },
+      { error: "Internal server error. Please try again later." }, // Generic message for security
       { status: 500 }
     );
   }

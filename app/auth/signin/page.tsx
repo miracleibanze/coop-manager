@@ -1,4 +1,3 @@
-// app/auth/signin/page.tsx
 "use client";
 
 import { signIn, getSession } from "next-auth/react";
@@ -16,18 +15,34 @@ export default function SignIn() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Check for error messages from NextAuth
+  // Clear errors when user starts typing
   useEffect(() => {
-    const error = searchParams.get("error");
     if (error) {
-      switch (error) {
+      setError("");
+    }
+  }, [email, password]);
+
+  // Check for error messages from URL parameters
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+    if (errorParam) {
+      switch (errorParam) {
         case "OAuthAccountNotLinked":
           setError(
             "An account already exists with this email. Please sign in with your password."
           );
           break;
         case "CredentialsSignin":
-          setError("Invalid credentials. Please try again.");
+          setError("Invalid email or password. Please try again.");
+          break;
+        case "Configuration":
+          setError("There is a problem with the server configuration.");
+          break;
+        case "AccessDenied":
+          setError("You do not have permission to sign in.");
+          break;
+        case "Verification":
+          setError("The verification link was invalid or has expired.");
           break;
         default:
           setError("An error occurred during sign in. Please try again.");
@@ -39,6 +54,7 @@ export default function SignIn() {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setSuccessMessage("");
 
     if (!email || !password) {
       setError("Please enter both email and password");
@@ -50,18 +66,35 @@ export default function SignIn() {
       const result = await signIn("credentials", {
         email,
         password,
-        redirect: true, // We'll handle redirect manually
-        callbackUrl: "/dashboard",
+        redirect: false, // Handle redirect manually to catch errors
       });
 
-      console.log("SignIn result:", result); // Debug log
+      console.log("SignIn result:", result);
 
       if (result?.error) {
-        setError("Invalid email or password. Please try again.");
-      } else if (result?.ok) {
+        // Handle specific error cases
+        switch (result.error) {
+          case "No account found with this email":
+            setError("No account found with this email address.");
+            break;
+          case "Invalid password":
+            setError("The password you entered is incorrect.");
+            break;
+          case "This email is registered with Google. Please use Google Sign In.":
+            setError(
+              "This email is registered with Google. Please use the Google Sign In button."
+            );
+            break;
+          case "Email and password are required":
+            setError("Please enter both email and password.");
+            break;
+          default:
+            setError("Invalid email or password. Please try again.");
+        }
+      } else if (result?.ok && !result.error) {
         setSuccessMessage("Sign in successful! Redirecting...");
 
-        // Force redirect to dashboard
+        // Wait a moment to show success message, then redirect
         setTimeout(() => {
           router.push("/dashboard");
           router.refresh(); // Refresh to get latest session
@@ -78,40 +111,32 @@ export default function SignIn() {
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     setError("");
+    setSuccessMessage("");
 
     try {
-      const result = await signIn("google", {
-        redirect: false,
+      await signIn("google", {
         callbackUrl: "/dashboard",
       });
-
-      if (result?.error) {
-        setError(result.error);
-      }
+      // Google signin will handle redirect automatically
     } catch (error) {
       console.error("Google sign in error:", error);
       setError("Failed to sign in with Google. Please try again.");
-    } finally {
       setGoogleLoading(false);
     }
   };
 
-  useEffect(() => {
-    setError("");
-  }, []);
-
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 border border-lightBorder sm:px-8 px-4 py-12 backdrop-brightness-110 backdrop-blur-md rounded-2xl">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-primary">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to CoopManager
           </h2>
-          <p className="mt-2 text-center text-sm text-primary/80">
+          <p className="mt-2 text-center text-sm text-gray-600">
             Or{" "}
             <a
               href="/auth/register"
-              className="font-medium text-blue-600 hover:text-blue-500"
+              className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
             >
               create a new account
             </a>
@@ -123,7 +148,7 @@ export default function SignIn() {
           <button
             onClick={handleGoogleSignIn}
             disabled={googleLoading}
-            className="w-full flex justify-center items-center py-3 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex justify-center items-center py-3 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {googleLoading ? (
               <span className="flex items-center">
@@ -144,7 +169,7 @@ export default function SignIn() {
             <div className="w-full border-t border-gray-300" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-6 bg-background text-lightBackground py-1 rounded-full border border-lightBorder">
+            <span className="px-4 bg-white text-gray-500">
               Or continue with email
             </span>
           </div>
@@ -153,19 +178,21 @@ export default function SignIn() {
         <form className="mt-8 space-y-6" onSubmit={handleCredentialsSubmit}>
           {successMessage && (
             <div className="bg-green-50 border border-green-200 rounded-md p-4">
-              <p className="text-green-800 text-sm">{successMessage}</p>
+              <p className="text-green-800 text-sm font-medium">
+                {successMessage}
+              </p>
             </div>
           )}
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-md p-4">
-              <p className="text-red-800 text-sm">{error}</p>
+              <p className="text-red-800 text-sm font-medium">{error}</p>
             </div>
           )}
           <div className="space-y-4">
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-primary mb-1"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Email address
               </label>
@@ -175,7 +202,7 @@ export default function SignIn() {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-primary/30 placeholder-primary/50 text-primary focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition-colors"
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -185,7 +212,7 @@ export default function SignIn() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-primary mb-1"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Password
               </label>
@@ -195,7 +222,7 @@ export default function SignIn() {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-primary/30 placeholder-primary/50 text-primary focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition-colors"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -207,7 +234,7 @@ export default function SignIn() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {loading ? (
                 <span className="flex items-center">

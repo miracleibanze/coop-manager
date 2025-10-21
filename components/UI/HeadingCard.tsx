@@ -7,7 +7,7 @@ interface HeadingCardProps {
 
 const HeadingCard: FC<HeadingCardProps> = ({ title, subTitle }) => {
   return (
-    <div className="w-full py-3 sm:px-6 px-3 text-inverse bg-foreground">
+    <div className="w-full sm:py-6 py-4 sm:px-6 px-3 text-inverse bg-foreground">
       <div className="max_w_custom">
         <h1 className="text-3xl font-bold">{title}</h1>
         <p className="">{subTitle}</p>

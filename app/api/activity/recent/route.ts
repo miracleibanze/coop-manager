@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Activity from "@/models/Activity";
 import { connectDB } from "@/lib/db";
+import { Types } from "mongoose";
 
 export async function GET() {
   try {
@@ -13,10 +14,13 @@ export async function GET() {
     }
 
     await connectDB();
-    const activities = await Activity.find({})
+    const activities = await Activity.find({
+      cooperativeId: new Types.ObjectId(session.user.cooperativeId),
+    })
       .populate("member", "name email")
       .sort({ createdAt: -1 })
-      .limit(10);
+      .limit(10)
+      .exec();
 
     return NextResponse.json(activities);
   } catch (error) {

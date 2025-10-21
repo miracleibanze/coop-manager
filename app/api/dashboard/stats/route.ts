@@ -7,6 +7,7 @@ import Loan from "@/models/Loan";
 import { connectDB } from "@/lib/db";
 import Contribution from "@/models/Contribution";
 import Expense from "@/models/Expense";
+import { Types } from "mongoose";
 
 export async function GET() {
   try {
@@ -22,7 +23,12 @@ export async function GET() {
         Member.countDocuments({ status: "active" }),
         Loan.countDocuments({ status: "active" }),
         Contribution.aggregate([
-          { $match: { status: "approved" } },
+          {
+            $match: {
+              cooperativeId: new Types.ObjectId(session.user.cooperativeId),
+              status: "approved",
+            },
+          },
           { $group: { _id: null, total: { $sum: "$amount" } } },
         ]),
         Expense.aggregate([
