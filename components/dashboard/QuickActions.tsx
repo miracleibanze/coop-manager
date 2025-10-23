@@ -1,5 +1,5 @@
 // components/dashboard/QuickActions.tsx
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card";
+import { Card, CardContent, CardTitle } from "@/components/UI/card";
 import { Button } from "@/components/UI/Button";
 import Link from "next/link";
 import { HandCoins, FilePlus2, UserPlus, BarChart3 } from "lucide-react";
@@ -29,27 +29,21 @@ export function QuickActions() {
   ];
 
   return (
-    <div className="max_w_custom">
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {actions.map((action) => (
-              <Link key={action.label} href={action.href}>
-                <Button
-                  className="w-full h-20 flex flex-col gap-2 bg-lightBackground border border-colorBorder hover:border-secondary"
-                  variant="outline"
-                >
-                  <action.icon className="w-5 h-5 text-primary" />
-                  <span className="text-sm">{action.label}</span>
-                </Button>
-              </Link>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+    <div className="space-y-3 py-6">
+      <h2 className="text-2xl font-bold">Quick Actions</h2>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {actions.map((action) => (
+          <Link key={action.label} href={action.href}>
+            <Button
+              className="w-full h-20 flex flex-col gap-2 bg-lightBackground border border-colorBorder shadow-md hover:-translate-y-1 hover:shadow-lg shadow-colorBorder transition-all duration-100"
+              variant="outline"
+            >
+              <action.icon className="w-5 h-5 text-primary" />
+              <span className="text-sm">{action.label}</span>
+            </Button>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }

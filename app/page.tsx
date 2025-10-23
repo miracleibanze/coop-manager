@@ -7,6 +7,8 @@ import LandingIllustration from "@/public/landingIllustration.jpg";
 import darkLandingIllustration from "@/public/darkLandingIllustration.jpg";
 import Link from "next/link";
 import { Facebook, Github, Twitter } from "@/components/UI/Icons";
+import { useSession } from "next-auth/react";
+import DashboardPage from "./dashboard/page";
 
 interface Feature {
   title: string;
@@ -45,6 +47,12 @@ const features: Feature[] = [
 ];
 
 const LandingPage: React.FC = () => {
+  const { data: session } = useSession();
+
+  if (session?.user) {
+    return <DashboardPage />;
+  }
+
   return (
     <main className="space-y-32 w-full">
       {/* Hero Section */}
@@ -85,7 +93,7 @@ const LandingPage: React.FC = () => {
 
       {/* Features Section */}
       <section id="features" className="section !py-16">
-        <h2 className="text-4xl font-bold text-center mb-12 backdrop-blur-lg py-3 w-full max-w-7xl mx-auto border border-secondary rounded-lg bg-background/50">
+        <h2 className="text-4xl font-bold text-center mb-12 backdrop-blur-lg py-3 w-full max-w-screen-2xl mx-auto border border-secondary rounded-lg bg-background/50">
           Features That Make a Difference
         </h2>
         <div className="grid md:grid-cols-3 gap-8">
@@ -156,7 +164,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="max-w-7xl w-full rounded-2xl px-6 text-center backdrop-blur-xl py-16 mx-auto border border-lightBorder bg-background/50">
+      <section className="max-w-screen-2xl w-full rounded-2xl px-6 text-center backdrop-blur-xl py-16 mx-auto border border-lightBorder bg-background/50">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div className="p-6">
             <div className="text-3xl md:text-4xl font-bold text-third mb-2">
@@ -188,7 +196,7 @@ const LandingPage: React.FC = () => {
       {/* Pricing Section */}
       <section
         id="pricing"
-        className="max-w-7xl mx-auto px-6 !py-16 text-center section"
+        className="max-w-screen-2xl mx-auto px-6 !py-16 text-center section"
       >
         <h2 className="text-4xl font-bold mb-12 text-primary">Pricing Plans</h2>
         <div className="grid md:grid-cols-3 gap-8">

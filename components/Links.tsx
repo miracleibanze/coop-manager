@@ -19,7 +19,7 @@ export interface MainLink {
 export const sidebarLinks: MainLink[] = [
   {
     name: "Dashboard",
-    path: "/dashboard",
+    path: "/",
     description: "Overview of cooperative activities and key metrics",
   },
   {

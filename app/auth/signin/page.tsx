@@ -115,7 +115,7 @@ export default function SignIn() {
 
     try {
       await signIn("google", {
-        callbackUrl: "/dashboard",
+        callbackUrl: "/",
       });
       // Google signin will handle redirect automatically
     } catch (error) {

@@ -3,6 +3,7 @@ import mongoose, { Document, Schema } from "mongoose";
 
 export interface IExpense extends Document {
   category: "office" | "operations" | "maintenance" | "other";
+  cooperativeId: mongoose.Types.ObjectId;
   amount: number;
   date: Date;
   description?: string;
@@ -17,6 +18,11 @@ const ExpenseSchema: Schema = new Schema(
     category: {
       type: String,
       enum: ["office", "operations", "maintenance", "other"],
+      required: true,
+    },
+    cooperativeId: {
+      type: Schema.Types.ObjectId,
+      ref: "Cooperative",
       required: true,
     },
     amount: { type: Number, required: true },

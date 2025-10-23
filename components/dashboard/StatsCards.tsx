@@ -26,8 +26,6 @@ export function StatsCards() {
     refetchInterval: 30000,
   });
 
-  if (error) return <div className="text-red-500">Error loading stats</div>;
-
   const stats = [
     {
       title: "Total Members",
@@ -58,11 +56,12 @@ export function StatsCards() {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 max_w_custom [&>_]:transition-all duration-200">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 [&>_]:transition-all duration-200">
+        {error && <div className="text-red-500">Error loading stats</div>}
         {stats.map((stat) => (
           <Card
             key={stat.title}
-            className="border-0 shadow-lg bg-gradient-to-br from-white to-gray-50"
+            className="border-0 shadow-lg shadow-primary/20 bg-gradient-to-br from-white to-gray-50"
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-primary/80">

@@ -92,7 +92,7 @@ export default function Cooperative() {
 
         // Force a complete page refresh to reload the layout and session
         setTimeout(() => {
-          window.location.href = "/dashboard"; // This causes a full page reload
+          router.push("/"); // This causes a full page reload
         }, 1500);
       } else {
         setError(data.error || "Failed to create cooperative");
@@ -147,7 +147,7 @@ export default function Cooperative() {
 
         // Force a complete page refresh
         setTimeout(() => {
-          window.location.href = "/dashboard"; // Full page reload
+          router.push("/"); // Full page reload
         }, 1500);
       } else {
         setError(data.error || "Failed to join cooperative");

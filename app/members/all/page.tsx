@@ -15,6 +15,7 @@ import { Input } from "@/components/UI/InputComponents";
 import { Button } from "@/components/UI/Button";
 import { Badge } from "@/components/UI/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card";
+import { usePathname } from "next/navigation";
 
 interface Member {
   _id: string;
@@ -37,6 +38,7 @@ export default function AllMembersPage() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const pathname = usePathname();
 
   const { data: members, isLoading } = useQuery({
     queryKey: ["members"],

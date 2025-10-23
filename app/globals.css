@@ -3,7 +3,7 @@
 *:not(.dark):root {
   --background: theme("colors.zinc.100");
   --foreground: theme("colors.gray.950");
-  --primary: theme("colors.gray.900");
+  --primary: theme("colors.slate.800");
   --inverse: theme("colors.zinc.100");
   --secondary: theme("colors.rose.500");
   --third: theme("colors.green.600");
@@ -22,11 +22,11 @@
     --background: theme("colors.gray.950");
     --foreground: theme("colors.zinc.100");
     --primary: theme("colors.zinc.100");
-    --inverse: theme("colors.gray.900");
+    --inverse: theme("colors.slate.800");
     --secondary: theme("colors.rose.500");
     --third: theme("colors.green.600");
     --lightBorder: #ffffff80;
-    --colorPrimary: theme("colors.blue.700");
+    --colorPrimary: theme("colors.blue.400");
     --lightBackground: theme("colors.blue.50");
     --colorBorder: theme("colors.blue.300");
     --cta: theme("colors.blue.600"); /* Added CTA color */
@@ -64,11 +64,11 @@ section {
 }
 
 .section {
-  @apply px-6 lg:px-8 [&>div]:max-w-7xl [&>div]:mx-auto;
+  @apply px-6 lg:px-8 [&>div]:max-w-screen-2xl [&>div]:mx-auto;
 }
 
 .container {
-  @apply 2xl:py-24 2xl:pt-0 pb-16 max-2xl:min-h-[70vh] w-full max-w-7xl mx-auto;
+  @apply 2xl:py-24 2xl:pt-0 pb-16 max-2xl:min-h-[70vh] w-full max-w-screen-2xl mx-auto;
 }
 
 .shadow_left {

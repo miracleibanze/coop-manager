@@ -14,6 +14,12 @@ import { Sidebar } from "@/components/Sidebar";
 import Loading from "./loading";
 import Cooperative from "@/components/Cooperative";
 import HeadingCard from "@/components/UI/HeadingCard";
+import Head from "next/head"; // ✅ Use this
+import { Provider, useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState, store } from "@/redux/store";
+import { toggleSidebar } from "@/redux/slices/SidebarSlice";
+import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,17 +37,35 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const queryClient = new QueryClient();
+  const pathname = usePathname();
+
+  const pageTitle =
+    "Coopmanager " +
+    (pathname.split("/")[1]
+      ? `| ${pathname.split("/")[1]}`
+      : "| your trusted partner");
 
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
+      <Head>
+        <title>{pageTitle}</title>
+        <meta
+          name="description"
+          content="Coopmanager — your trusted cooperative management platform."
+        />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background transition-all duration-500 flex`}
       >
-        <QueryClientProvider client={queryClient}>
-          <SessionProvider>
-            <MainLayout>{children}</MainLayout>
-          </SessionProvider>
-        </QueryClientProvider>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <SessionProvider>
+              <MainLayout>{children}</MainLayout>
+            </SessionProvider>
+          </QueryClientProvider>
+        </Provider>
       </body>
     </html>
   );
@@ -51,14 +75,11 @@ const MainLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
   const pathname = usePathname();
   const { data: session, status } = useSession();
 
-  const isStart = pathname === "/" || pathname.startsWith("/auth/");
+  const isStart =
+    (!session?.user && pathname === "/") || pathname.startsWith("/auth/");
 
-  // Show loader while checking session for protected pages
-  if (!isStart && status === "loading") {
-    return <Loading />;
-  }
+  if (status === "loading") return <Loading />;
 
-  // Show loader if not authenticated and not on start/auth routes
   if (!isStart && !session) {
     return (
       <main className="fixed top-1 right-0 bottom-1 left-64 flex items-center justify-center rounded-4xl border border-lightBorder shadow_left shadow-lightBorder">
@@ -80,8 +101,8 @@ const MainLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
             className={`${
               isStart
                 ? "pt-16 w-full"
-                : "fixed top-1 right-0 bottom-1 left-64 rounded-4xl border border-lightBorder overflow-hidden shadow_left shadow-lightBorder"
-            }`}
+                : "fixed top-1 right-0 bottom-1 left-64 rounded-4xl border border-lightBorder shadow_left shadow-lightBorder"
+            } flex flex-col`}
           >
             {!isStart && (
               <HeadingCard
@@ -90,7 +111,7 @@ const MainLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
                   "Dashboard"
                 }
                 subTitle={`Welcome back, ${
-                  session?.user?.name || "manage you cooperative"
+                  session?.user?.name || "manage your cooperative"
                 }! ${
                   session?.user.cooperative?.name
                     ? "managing " + session.user.cooperative?.name
@@ -103,7 +124,7 @@ const MainLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
                 src={backgroundImage}
                 alt="background"
                 fill
-                className="object-cover dark:hidden opacity-50"
+                className="object-cover dark:hidden opacity-35"
               />
               <Image
                 src={darkBackgroundImage}
@@ -112,7 +133,11 @@ const MainLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
                 className="object-cover hidden dark:block"
               />
             </div>
-            <div className="relative overflow-auto h-full w-full">
+            <div
+              className={`relative overflow-auto h-full w-full ${
+                !isStart ? "section pt-4 pb-20 md:px-3 space-y-6" : ""
+              }`}
+            >
               {children}
             </div>
           </main>

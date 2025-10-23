@@ -45,7 +45,7 @@ export function DashboardCharts() {
   const hasLoanData = data?.monthlyLoans?.some((item) => item.loans > 0);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max_w_custom">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* --- Contributions Chart --- */}
       <Card>
         <CardHeader>

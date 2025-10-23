@@ -51,7 +51,7 @@ export function RecentActivityTable() {
   };
 
   return (
-    <div className="max_w_custom">
+    <>
       <Card>
         <CardHeader>
           <CardTitle>Recent Activity</CardTitle>
@@ -118,6 +118,6 @@ export function RecentActivityTable() {
           </Table>
         </CardContent>
       </Card>
-    </div>
+    </>
   );
 }
