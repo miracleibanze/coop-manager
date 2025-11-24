@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     // Check if user already has a cooperative
-    const existingUser = await User.findOne({email: session.user.id}).exec();
+    const existingUser = await User.findOne({_id: session.user.id}).exec();
     if (!existingUser) {
       return NextResponse.json({ error: "User not found" }, { status: 400 });
     }
